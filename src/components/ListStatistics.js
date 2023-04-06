@@ -3,9 +3,7 @@ import Table from 'react-bootstrap/Table';
 
 function listStatistics({statistics}){
 
-    const stats = [...statistics];
-
-    const items = stats.map((stat, idx) => {
+    const items = statistics.map((stat, idx) => {
             return(
             <tr key={idx.toString()}>
                 <td>{new Date(stat.timeStart).toLocaleString('ua-UK')}</td>
@@ -23,7 +21,7 @@ function listStatistics({statistics}){
     );
 
     return (
-        <Table striped bordered hover>
+        <Table striped bordered hover className="mt5">
             <thead>
             <tr>
                 <th>Start date, time</th>

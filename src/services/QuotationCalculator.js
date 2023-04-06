@@ -1,33 +1,31 @@
 import Accumulator from "../entities/Accumulator";
-import Statistic from "../entities/Statistic";
 
 class QuotationCalculator {
     accum = new Accumulator();
 
-    // constructor(){
-    //     this.accum = new Accumulator();
-    // }
-
-    static async calculate(accum){
-        console.dir({accumStatisticsCalculate: accum});
+    setTimeStart(accum){
         accum.timeStart = new Date().getTime();
-        // const accum = {...this.accum};
-
-        await this.calcStandartDev(accum);
-        await this.calcMode(accum);
-        accum.timeCalculations = new Date().getTime() - accum.timeStart;
-        console.dir({accumStatisticsAfterCalculate: accum});
-        return Object.assign({...new Statistic()}, accum);
-        // return this.accum.getStatistic();
     }
 
-    static async calcStandartDev(accum){
+    setTimeCalculate(accum){
+        accum.timeCalculations = new Date().getTime() - accum.timeStart;
+    }
+
+    async calculate(accum){
+        this.setTimeStart(accum);
+        await this.calcStandartDev(accum);
+        await this.calcMode(accum);
+        this.setTimeCalculate(accum);
+        return accum;
+    }
+
+    async calcStandartDev(accum){
         const numerator = accum.sumSqrt - 2 * accum.avg * accum.sum + accum.quantity * Math.pow(accum.avg, 2);
         const denominator = accum.quantity - 1;
         accum.standartDev = Math.sqrt(numerator / denominator);
     }
 
-    static async calcMode(accum){
+    async calcMode(accum){
         if(accum.modeQuotes.size === 0){
             accum.mode = [...accum.uniqueQuotes.keys()][0];
             return;
@@ -44,8 +42,8 @@ class QuotationCalculator {
         if(typeof value !== 'number' || isNaN(value) || !id)
             return;
 
-        if(this.accum.prevQuotesId > 0 && this.accum.prevQuotesId !== id - 1){
-            this.accum.lostQuotations++;
+        if(this.accum.prevQuotesId > 0 && ++this.accum.prevQuotesId !== id){
+            this.accum.lostQuotations += id - this.accum.prevQuotesId;
         }
 
         this.accum.prevQuotesId = id;
@@ -95,4 +93,4 @@ class QuotationCalculator {
     }
 }
 
-export default QuotationCalculator;
+export default new QuotationCalculator();

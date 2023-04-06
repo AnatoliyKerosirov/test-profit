@@ -1,18 +1,20 @@
-export default class Quotation {
+class Quotation {
     url;
+    socket;
 
     constructor(url){
         this.url = url;
     }
 
     startGetQuotations(setDataQuotation){
-        const socket = new WebSocket(this.url);
-        socket.onmessage = (e) => this.getQuotations(e, setDataQuotation);
+        this.socket = new WebSocket(this.url);
+        this.socket.onmessage = (e) => this.getQuotations(e, setDataQuotation);
     }
 
     getQuotations(event, setDataQuotation){
         const quotation = JSON.parse(event.data);
-
         setDataQuotation(quotation);
     }
 }
+
+export default Quotation;
