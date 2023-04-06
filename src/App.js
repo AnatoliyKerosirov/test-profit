@@ -24,6 +24,9 @@ function App() {
 
     function start() {
         setIsStart(true);
+        if(countQuotations === 0){
+            setCountQuotations(defaultNumberOfQuotations);
+        }
         quotation.startGetQuotations(setDataQuotation);
     }
 
@@ -33,15 +36,17 @@ function App() {
 
         setQuoteCounter(accumulatorCurrentData.quantity);
 
-        if(accumulatorCurrentData.quantity % countQuotations === 0){
+        const count = countQuotations || defaultNumberOfQuotations;
+        if(accumulatorCurrentData.quantity % count === 0){
             saveStatistic(await Calculator.calculate(accumulatorCurrentData));
         }
     }
 
     function saveStatistic(statistic) {
         Db.saveStatistic(statistic);
-        if(!isStatistics)
+        if(!isStatistics){
             setIsStatistics(true);
+        }
     }
 
     async function getStatistics() {
